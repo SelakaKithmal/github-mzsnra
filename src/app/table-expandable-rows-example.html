@@ -1,0 +1,75 @@
+<!-- {{formdataarray.value | json}} -->
+
+<mat-form-field>
+  <mat-label>Filter</mat-label>
+  <input matInput (keyup)="applyFilter($event)" placeholder="Filter" #input>
+</mat-form-field>
+<table
+  mat-table
+  [dataSource]="formdataarray.controls"
+  multiTemplateDataRows
+  class="mat-elevation-z8" matSort
+>
+  <ng-container 
+    matColumnDef="{{column}}"
+    *ngFor="let column of columnsToDisplay"
+  >
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{column}}</th>
+    <td mat-cell *matCellDef="let element"> {{ element.value[column] }}  </td>
+  </ng-container>
+
+  <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+  <ng-container matColumnDef="expandedDetail">
+    <td
+      mat-cell
+      *matCellDef="let element"
+      [attr.colspan]="columnsToDisplay.length"
+    >
+      <div
+        class="example-element-detail"
+        [@detailExpand]=" element.rowEdit == true ? 'expanded':'collapsed' "
+      >
+        <ng-container>
+          <div class="example-element-description">
+            <td class="example-element-weight">
+              <ng-template pTemplate="input">
+                <input
+                  pInputText
+                  type="text"
+                  [(ngModel)]="element.testhiddencol1"
+                />
+              </ng-template>
+              <ng-template pTemplate="output">
+                {{element.testhiddencol1}}
+              </ng-template>
+            </td>
+          </div>
+        </ng-container>
+        <div class="example-element-description">
+          <td class="example-element-weight">{{element.description}}</td>
+        </div>
+      </div>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+  <tr
+    mat-row
+    *matRowDef="let element; columns: columnsToDisplay;"
+    class="example-element-row"
+    [class.example-expanded-row]="expandedElement === element"
+    (click)="rowClicked(element)"
+  ></tr>
+  <tr
+    mat-row
+    *matRowDef="let row; columns: ['expandedDetail']"
+    class="example-detail-row"
+  ></tr>
+  <tr class="mat-row" *matNoDataRow>
+    <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
+  </tr>
+</table>
+
+<!-- Copyright 2020 Google LLC. All Rights Reserved.
+    Use of this source code is governed by an MIT-style license that
+    can be found in the LICENSE file at http://angular.io/license -->
